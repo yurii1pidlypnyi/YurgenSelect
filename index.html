@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <title>Проект</title>
+</head>
+<body>
+  <div class="select-my__container">
+    <div class="select__container">
+      <div class="select__search">
+        <input placeholder="Select Town" type="search" class="select__input">
+      </div>
+      <!-- <button type="button" data-value="0" class="select__field">Hello</button> -->
+      <ul class="select__values" hidden>
+        <li>
+          <button type="button" data-value="0" class="select__option select__option--placeholder">Hello</button>
+        </li>
+        <li>
+          <button type="button" data-value="kv" class="select__option">Kyiv</button>
+        </li>
+        <li>
+          <button type="button" data-value="lv" class="select__option">Lviv</button>
+        </li>
+        <li>
+          <button type="button" data-value="lk" class="select__option">Lutsk</button>
+        </li>
+        <li>
+          <button type="button" data-value="kh" class="select__option">Kharkiv</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="select-my__container">
+    <select name="name" class="select-1">
+      <option value ="0" class="placeholder">Hello</option>
+      <option value="kv">Kyiv</option>
+      <option value="lv">Lviv</option>
+      <option value="ko">Khoma</option>
+      <option value="al">alubka</option>
+      <option value="qw">Qwerty</option>
+      <option value="ke">Kerch</option>
+      <option value="ka">Kalush</option>
+      <option value="qe">Qeuro</option>
+      <option value="we" disabled>Welcome</option>
+      <option value="lk">Lutsk</option>
+      <option value="kh" disabled>Kharkiv</option>
+    </select>
+  </div>
+  <div class="select-my__container">
+    <select name="name" class="select">
+      <option value ="0" selected class="placeholder">Hello</option>
+      <option value="kv">Kyiv</option>
+      <option value="lv">Lviv</option>
+      <option value="pt">Poltava</option>
+      <option value="lk">Lutsk</option>
+      <option value="kh">Kharkiv</option>
+    </select>
+  </div>
+  <div class="select-2__container">
+    <select class="js-example-basic-single" aria-placeholder="ready-steady" width="100%" name="state">
+      <option></option>
+      <option value="AL">Alabama</option>
+      <option value="Ay">Alabay</option>
+      <option value="WY">Wyoming</option>
+      <option value="WY">New York</option>
+    </select>
+  </div>
+  <div class="btn"></div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="./js/classSelect.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>
