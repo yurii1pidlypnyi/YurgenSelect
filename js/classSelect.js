@@ -14,6 +14,7 @@ class YurgenSelect {
 
     this.creating();
     this.filling();
+    this.availableList();
     this.events();
 
     this.options.ready(this);
@@ -98,6 +99,15 @@ class YurgenSelect {
     this.selectElems.selectValues = [...this.selectElems.selectList.querySelectorAll('.select__option')];
   }
 
+  availableList() {
+    this.selectElems.activeList = [];
+    this.selectElems.selectValues.forEach(item => {
+      if(!item.closest('li').classList.contains('hidden')){
+        this.selectElems.activeList.push(item);
+      }
+    })
+  }
+
   events () {
     // select Open/Close
     this.selectElems.selectWrapper.addEventListener('click', (ev) => {
@@ -151,28 +161,25 @@ class YurgenSelect {
       this.selectElems.selectInput.addEventListener('input', () => {
         this.search();
         this.availableList();
+        this.changeHighlight();
       })
     }
     // ========================
   }
 
   selectOpen () {
-    let activeElement = this.selectElems.selectList.querySelector('.select__option.active');
-    if(activeElement){
-      activeElement.classList.add('highlight');
-    } else {
-      if(this.options.search) {
-        this.selectElems.selectValues[1].classList.add('highlight');
-      }
-    }
+    this.changeHighlight('open');
 
     if(this.selectElems.selectWrapper.classList.contains('active')) {
       this.selectClose()
     } else {
-      this.search();
       this.selectScroll('opening');
       this.selectElems.selectListWrap.classList.remove('hidden')
       this.selectElems.selectWrapper.classList.add('active')
+
+      if(this.options.search) {
+        this.search();
+      }
     }
   }
 
@@ -181,6 +188,7 @@ class YurgenSelect {
       this.selectElems.selectListWrap.classList.add('hidden')
       this.selectElems.selectWrapper.classList.remove('active');
       if(this.options.search){
+        this.checkSearchValue()
         this.selectElems.selectInput.blur();
       }
     } else {
@@ -214,9 +222,50 @@ class YurgenSelect {
     this.options.change(this);
   }
 
+  removeClass (arr, classname) {
+    arr.forEach(item => {
+      item.classList.remove(classname);
+    })
+  }
+
+  selectScroll (key, el) {
+    switch (key) {
+      case 'opening' :
+        let focusEl = this.selectElems.selectList.querySelector('.active');
+
+        if(this.options.search){
+          focusEl = this.selectElems.selectList.querySelector('.highlight');
+        }
+
+        if(focusEl) {
+          this.selectElems.selectList.scrollTop = focusEl.offsetTop;
+        }
+        break;
+
+      case 'arrows' :
+        let scrollPosition = this.selectElems.selectList.scrollTop;
+        let scrollListHeight = this.selectElems.selectList.offsetHeight;
+
+        let conditionOne = (scrollPosition + scrollListHeight) >= el.offsetTop + el.offsetHeight;
+        let conditionTwo = scrollPosition <= el.offsetTop;
+
+        if( !(conditionOne && conditionTwo)){
+          if(el.offsetTop <= scrollPosition) {
+            this.selectElems.selectList.scrollTop = el.offsetTop;
+          } else {
+            this.selectElems.selectList.scrollTop = el.offsetTop + el.offsetHeight - scrollListHeight;
+          }
+        }
+        break;
+        case 'focus':
+          console.log('scroll to active element')
+          break;
+    }
+  }
+
   search () {
     let searchStr = this.selectElems.selectInput.value;
-    let searItems = [...this.selectElems.selectList.querySelectorAll('span')];
+    let searItems = [...this.selectElems.selectValues];
     searItems.splice(0,1);
 
     if(searchStr.length) {
@@ -267,51 +316,31 @@ class YurgenSelect {
     this.changeValue(choosenItem);
   }
 
-  removeClass (arr, classname) {
-    arr.forEach(item => {
-      item.classList.remove(classname);
-    })
-  }
-
-  selectScroll (key, el) {
-    switch (key) {
-      case 'opening' :
-        if(this.options.search){
-          let focusEl = this.selectElems.selectList.querySelector('.highlight');
-          let list = this.selectElems.selectList;
-          list.scrollTop = focusEl.offsetTop;
-        }
-        break;
-      case 'arrows' :
-        let scrollPosition = this.selectElems.selectList.scrollTop;
-        let scrollListHeight = this.selectElems.selectList.offsetHeight;
-
-        let conditionOne = (scrollPosition + scrollListHeight) >= el.offsetTop + el.offsetHeight;
-        let conditionTwo = scrollPosition <= el.offsetTop;
-
-        if( !(conditionOne && conditionTwo)){
-          if(el.offsetTop <= scrollPosition) {
-            this.selectElems.selectList.scrollTop = el.offsetTop;
-          } else {
-            this.selectElems.selectList.scrollTop = el.offsetTop + el.offsetHeight - scrollListHeight;
-          }
-        }
-        break;
-    }
-  }
-
   clearSearch (items) {
     items.forEach(item => {
       item.closest('li').classList.remove('hidden');
     });
   }
 
-  availableList() {
-    this.selectElems.activeList = [];
-    this.selectElems.selectValues.forEach(item => {
-      if(!item.closest('li').classList.contains('hidden')){
-        this.selectElems.activeList.push(item);
-      }
-    })
+  checkSearchValue() {
+  }
+
+  changeHighlight(ev) {
+    switch(ev) {
+      case 'open':
+        let activeElement = this.selectElems.selectList.querySelector('.select__option.active');
+
+        if(activeElement && this.selectElems.activeList.indexOf(activeElement) != -1){
+          activeElement.classList.add('highlight');
+        } else {
+          if(this.options.search) {
+            this.selectElems.activeList[0].classList.add('highlight');
+          }
+        }
+        break;
+      default:
+        console.log('change highlight');
+        break;
+    }
   }
 }
