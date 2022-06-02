@@ -20,62 +20,57 @@ class YurgenSelect {
     this.options.ready(this);
   }
 
-  creating (){
+  creating() {
     let selectBody = document.createElement('div');
     selectBody.classList.add('select__container');
 
-    if(this.options.search){
-      selectBody.innerHTML = `
-      <div class="select__search">
-        <input type="search" class="select__input">
-      </div>
-      <div class="select__values hidden">
-        <ul class="select__list"></ul>
-      </div>
-      `;
-      this.selectElems.selectSearch = selectBody.querySelector('.select__search');
-      this.selectElems.selectInput = selectBody.querySelector('.select__input');
-    } else {
-      selectBody.innerHTML = `
-      <button type="button" class="select__field"></button>
-      <div class="select__values hidden">
-        <ul class="select__list"></ul>
-      </div>
-      `;
-      this.selectElems.selectField = selectBody.querySelector('.select__field');
-    }
+    selectBody.innerHTML = `
+    <button type="button" class="select__field"><span></span></button>
+    <div class="select__values hidden">
+      <ul class="select__list"></ul>
+    </div>
+    `;
 
     this.selectElems.selectWrapper = selectBody;
     this.selectElems.selectListWrap = this.selectElems.selectWrapper.querySelector('.select__values');
     this.selectElems.selectList = this.selectElems.selectWrapper.querySelector('.select__list');
+    this.selectElems.selectField = this.selectElems.selectWrapper.querySelector('.select__field');
+
+    if(this.options.search){
+      this.selectElems.selectListWrap.insertAdjacentHTML('afterbegin', `
+      <div class="select__search">
+        <input type="search" class="select__input">
+      </div>
+      `)
+
+      this.selectElems.selectSearch = this.selectElems.selectWrapper.querySelector('.select__search');
+      this.selectElems.selectInput = this.selectElems.selectWrapper.querySelector('.select__input');
+    }
   }
 
-  filling (){
+  filling() {
     [...this.select.options].forEach(item => {
       let selectListItem = document.createElement('li');
-      selectListItem.innerHTML = `<button type="button" data-value="${item.value}" class="select__option"><span>${item.label}</span></button>`;
+      selectListItem.innerHTML = `
+      <button type="button" data-value="${item.value}" class="select__option">
+        <span>${item.label}</span>
+      </button>
+      `;
       this.selectElems.selectList.append(selectListItem);
 
       let selectOption = selectListItem.querySelector('.select__option');
 
       if(item.selected) {
-        if(!this.options.search) {
-          this.selectElems.selectField.textContent = item.label;
-          this.selectElems.selectField.dataset.value = item.value;
-          
-          if(item.value == 0){
-            selectOption.classList.add('select__option--placeholder');
-          }else {
-            selectOption.classList.add('active');
-          }
-        } else {
-          if(item.value == 0) {
+        this.selectElems.selectField.innerHTML = `<span>${item.label}</span>`;
+        this.selectElems.selectField.dataset.value = item.value;
+
+        if(item.value == 0){
+          selectOption.classList.add('select__option--placeholder');
+          if(this.options.search){
             this.selectElems.selectInput.placeholder = item.label;
-          }else {
-            this.selectElems.selectInput.value = item.label;
-            this.selectElems.selectInput.dataset.value = item.value;
-            selectOption.classList.add('active');
           }
+        }else {
+          selectOption.classList.add('active');
         }
       }
 
@@ -89,6 +84,7 @@ class YurgenSelect {
             break;
         }
       }
+
       if(item.disabled) {
         selectOption.classList.add('disabled');
         selectOption.disabled = true;
@@ -108,7 +104,7 @@ class YurgenSelect {
     })
   }
 
-  events () {
+  events() {
     // select Open/Close
     this.selectElems.selectWrapper.addEventListener('click', (ev) => {
       let target = ev.target;
@@ -162,23 +158,46 @@ class YurgenSelect {
         this.search();
         this.availableList();
         this.changeHighlight();
+        this.selectScroll('focus');
+
+        if(this.selectElems.activeList.length == 0) {
+          let noFind = document.createElement('li');
+          noFind.innerHTML = `
+          <button type="button" class="select__option no-find disabled">No results found</button>
+          `;
+          if(!this.selectElems.selectList.classList.contains('no-result')){
+            this.selectElems.selectList.classList.add('no-result')
+            this.selectElems.selectList.prepend(noFind);
+          }
+        } else {
+          if(this.selectElems.selectList.classList.contains('no-result')){
+            this.selectElems.selectList.classList.remove('no-result')
+            this.selectElems.selectList.querySelector('.no-find').remove()
+          }
+        }
       })
     }
     // ========================
   }
 
-  selectOpen () {
-    this.changeHighlight('open');
+  selectOpen() {
+    if(this.options.search) {
+      this.selectElems.selectInput.value = '';
+      this.search();
+      this.availableList();
+    }
+
+    this.changeHighlight();
 
     if(this.selectElems.selectWrapper.classList.contains('active')) {
-      this.selectClose()
+      this.selectClose();
     } else {
-      this.selectScroll('opening');
-      this.selectElems.selectListWrap.classList.remove('hidden')
-      this.selectElems.selectWrapper.classList.add('active')
+      this.selectScroll('focus');
+      this.selectElems.selectListWrap.classList.remove('hidden');
+      this.selectElems.selectWrapper.classList.add('active');
 
       if(this.options.search) {
-        this.search();
+        this.selectElems.selectInput.focus();
       }
     }
   }
@@ -187,10 +206,6 @@ class YurgenSelect {
     if(!target){
       this.selectElems.selectListWrap.classList.add('hidden')
       this.selectElems.selectWrapper.classList.remove('active');
-      if(this.options.search){
-        this.checkSearchValue()
-        this.selectElems.selectInput.blur();
-      }
     } else {
       let activeSelect = [...document.querySelectorAll('.select__container.active')];
       activeSelect.splice(activeSelect.indexOf(target),1)
@@ -205,32 +220,23 @@ class YurgenSelect {
     this.removeClass(this.selectElems.selectValues,'active')
     item.classList.add('active');
 
-    if(this.options.search){
-      if(item.dataset.value == 0){
-        this.selectElems.selectInput.value = '';
-      } else {
-        this.selectElems.selectInput.value = item.textContent;
-      }
-      this.selectElems.selectInput.dataset.value = item.dataset.value;
+    this.selectElems.selectField.innerHTML = `<span>${item.textContent}</span>`;
+    this.selectElems.selectField.dataset.value = item.dataset.value;
 
-    } else {
-      this.selectElems.selectField.textContent = item.textContent;
-      this.selectElems.selectField.dataset.value = item.dataset.value;
-    }
-    
     this.selectClose()
+
     this.options.change(this);
   }
 
-  removeClass (arr, classname) {
+  removeClass(arr, classname) {
     arr.forEach(item => {
       item.classList.remove(classname);
     })
   }
 
-  selectScroll (key, el) {
+  selectScroll(key, el) {
     switch (key) {
-      case 'opening' :
+      case 'focus' :
         let focusEl = this.selectElems.selectList.querySelector('.active');
 
         if(this.options.search){
@@ -240,6 +246,7 @@ class YurgenSelect {
         if(focusEl) {
           this.selectElems.selectList.scrollTop = focusEl.offsetTop;
         }
+
         break;
 
       case 'arrows' :
@@ -257,20 +264,21 @@ class YurgenSelect {
           }
         }
         break;
-        case 'focus':
-          console.log('scroll to active element')
-          break;
     }
   }
 
-  search () {
+  search() {
     let searchStr = this.selectElems.selectInput.value;
     let searItems = [...this.selectElems.selectValues];
     searItems.splice(0,1);
 
     if(searchStr.length) {
       this.clearSearch(searItems);
+
       [].filter.call(searItems, (item) => {
+        if(searchStr.length>0 && item.classList.contains('disabled')){
+          item.closest('li').classList.add('hidden');
+        }
         if (!item.textContent.toUpperCase().includes(searchStr.toUpperCase())) {
           item.closest('li').classList.add('hidden');
         }
@@ -280,26 +288,28 @@ class YurgenSelect {
     }
   }
 
-  searchArrows (key) {
+  searchArrows(key) {
     let highlightEl = this.selectElems.selectList.querySelector('.highlight');
     let curInx = this.selectElems.activeList.indexOf(highlightEl);
-    if(curInx != -1){
+
+    if(curInx != -1 && highlightEl){
       switch (key) {
         case 38:
-          let prevEl = highlightEl.closest('li').previousElementSibling.querySelector('.select__option');
+          let prevEl = this.selectElems.activeList[curInx - 1];
           if(prevEl && prevEl.classList.contains('disabled')){
-            prevEl = prevEl.closest('li').previousElementSibling.querySelector('.select__option');
+            prevEl = this.selectElems.activeList[curInx - 2];
           }
-          if(prevEl.dataset.value != 0){
+          if(prevEl){
             highlightEl.classList.remove('highlight');
             prevEl.classList.add('highlight');
             this.selectScroll('arrows', prevEl);
           }
           break;
         case 40:
-          let nextEl = highlightEl.closest('li').nextElementSibling ? highlightEl.closest('li').nextElementSibling.querySelector('.select__option') : null;
+          let nextEl = this.selectElems.activeList[curInx + 1];
+
           if(nextEl && nextEl.classList.contains('disabled')){
-            nextEl = nextEl.closest('li').nextElementSibling ? nextEl.closest('li').nextElementSibling.querySelector('.select__option') : null;
+            nextEl = this.selectElems.activeList[curInx + 2];
           }
           if(nextEl){
             highlightEl.classList.remove('highlight');
@@ -311,36 +321,33 @@ class YurgenSelect {
     }
   }
 
-  searchEnter () {
+  searchEnter() {
     let choosenItem = this.selectElems.selectList.querySelector('.highlight');
     this.changeValue(choosenItem);
   }
 
-  clearSearch (items) {
+  clearSearch(items) {
     items.forEach(item => {
       item.closest('li').classList.remove('hidden');
     });
   }
 
   checkSearchValue() {
+
   }
 
-  changeHighlight(ev) {
-    switch(ev) {
-      case 'open':
-        let activeElement = this.selectElems.selectList.querySelector('.select__option.active');
+  changeHighlight() {
+    let activeElement = this.selectElems.selectList.querySelector('.select__option.active');
+    this.removeClass(this.selectElems.selectValues, 'highlight');
 
-        if(activeElement && this.selectElems.activeList.indexOf(activeElement) != -1){
-          activeElement.classList.add('highlight');
-        } else {
-          if(this.options.search) {
-            this.selectElems.activeList[0].classList.add('highlight');
-          }
+    if(activeElement && this.selectElems.activeList.indexOf(activeElement) != -1){
+      activeElement.classList.add('highlight');
+    } else {
+      if(this.options.search) {
+        if(this.selectElems.activeList[0]){
+          this.selectElems.activeList[0].classList.add('highlight');
         }
-        break;
-      default:
-        console.log('change highlight');
-        break;
+      }
     }
   }
 }
