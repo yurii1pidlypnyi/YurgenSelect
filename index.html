@@ -69,13 +69,13 @@
       </div>
       <h2>Multiply Select</h2>
       <div class="select-my__container">
-        <select name="with-search" class="select-3" hidden>
+        <select name="with-search[]" multiple="multiple" class="select-3" hidden>
           <option value ="0" selected>Select your towns</option>
-          <option value="kv">Kyiv</option>
-          <option value="lv">Lviv</option>
-          <option value="ko">Khoma</option>
-          <option value="al">alubka</option>
-          <option value="qw">Qwerty</option>
+          <option value="kv" selected>Kyiv</option>
+          <option value="lv" selected>Lviv</option>
+          <option value="ko" selected>Khoma</option>
+          <option value="al">Alubka</option>
+          <option value="qw" selected>Qwerty</option>
           <option value="ke">Kerch</option>
           <option value="ka">Kalush</option>
           <option value="qe">Qeuro</option>
@@ -83,9 +83,24 @@
           <option value="lk">Lutsk</option>
           <option value="kh" disabled>Kharkiv</option>
         </select>
+        <!-- <ul class="select-multiply__list">
+          <li class="select-multiply__item"><span class="select-multiply__text">Alabama</span><span class="select-multiply__cancel"></span></li>
+          <li class="select-multiply__item"><span class="select-multiply__text">Wyoming</span><span class="select-multiply__cancel"></span></li>
+          <li class="select-multiply__item"><span class="select-multiply__text">China</span><span class="select-multiply__cancel"></span></li>
+          <li class="select-multiply__item"><span class="select-multiply__text">Qwerty</span><span class="select-multiply__cancel"></span></li>
+        </ul> -->
       </div>
       <button type="submit" class="btn__submit">send</button>
+      <div class="btn"></div>
     </form>
+    <select class="js-example-basic-single" multiple="multiple" style="width: 50%;" name="state">
+      <option value="AL">Alabama</option>
+      <option value="WY">Wyoming</option>
+      <option value="CH">China</option>
+      <option value="KY">Kyiv</option>
+      <option value="KH">Kharkiv hjbj jh vjd vj xcjvh jxc vjx vjxch vcjx</option>
+      <option value="Km">Khmel</option>
+    </select>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

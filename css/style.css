@@ -51,7 +51,7 @@ h2 {
   display: block;
   position: absolute;
   width: 40px;
-  height: 40px;
+  height: 100%;
   right: 0;
   top: 0;
   border-radius: 0 4px 4px 0;
@@ -66,9 +66,10 @@ h2 {
   right: 0;
   top: 0;
   width: 40px;
-  height: 40px;
+  height: 100%;
   background: url('../img/arrow.svg') center no-repeat;
   transition: transform 0.4s ease 0s;
+  cursor: pointer;
 }
 
 .select__container.active::before {
@@ -87,26 +88,62 @@ h2 {
 
 
 .select__field{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 5px;
   min-height: 40px;
   width: 100%;
   font-size: 18px;
-  padding: 8px 40px 8px 15px;
+  padding: 8px 45px 8px 15px;
   border-radius: 4px;
   text-align: left;
   color: #5e5e5e;
   background: #fff;
+  cursor: pointer;
 }
 
 .select__field[data-value = '0'] {
   color: #9A9CA5;
 }
 
-.select__field span {
+.select-field__text {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   -webkit-line-clamp: 1;
+}
+
+.select__clear {
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  flex: 0 0 auto;
+}
+.select__clear::before,
+.select__clear::after{
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  position: absolute;
+  left: 0;
+  background-color: #A9D6DF;
+  transition: background-color 0.4s ease 0s;
+}
+.select__clear::before{
+  top: 9px;
+  transform: rotate(45deg);
+}
+.select__clear::after{
+  bottom: 9px;
+  transform: rotate(-45deg);
+}
+.select__clear:hover::after,
+.select__clear:hover::before {
+  background: #78a5ae;
 }
 
 input[type='search']::-webkit-search-decoration,
@@ -126,7 +163,6 @@ input[type='search']::-webkit-search-results-decoration {
   height: 100%;
   width: 100%;
   color: #5e5e5e;
-  /* border: 1px solid #9a9a9a; */
   border: 1px solid #A9D6DF;
   padding: 8px 30px 8px 8px;
   font-size: 18px;
@@ -217,7 +253,92 @@ input[type='search']::-webkit-search-results-decoration {
   color: #9A9CA5;
   cursor: default;
 }
+/* multiply */
+.select__container.select-multiply .select__option{
+  padding-right: 30px;
+  position: relative;
+}
+.select__container.select-multiply .select__option::after{
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: url('../img/check.svg') center / 20px 20px no-repeat;
+  opacity: 0;
+  visibility: hidden;
+}
+.select__container.select-multiply .select__option.active::after{
+  opacity: 1;
+  visibility: visible;
+}
 
+.select-multiply__list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.select-multiply__item {
+  font-size: 18px;
+  color: #5e5e5e;
+  border: 1px solid #A9D6DF;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 10px;
+  transition: border-color 0.4s ease 0s;
+}
+
+.select-multiply__text {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+}
+.select-multiply__cancel {
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.select-multiply__cancel::before,
+.select-multiply__cancel::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  position: absolute;
+  left: 0;
+  background-color: #A9D6DF;
+  transition: background-color 0.4s ease 0s;
+}
+
+.select-multiply__cancel::before {
+  top: 9px;
+  transform: rotate(45deg);
+}
+.select-multiply__cancel::after {
+  bottom: 9px;
+  transform: rotate(-45deg);
+}
+.select-multiply__item:hover {
+  border-color: #78a5ae;
+}
+.select-multiply__item:hover .select-multiply__cancel::after,
+.select-multiply__item:hover .select-multiply__cancel::before {
+  background-color: #78a5ae;
+}
 /* ============== */
 .btn__submit {
   display: block;
@@ -233,4 +354,17 @@ input[type='search']::-webkit-search-results-decoration {
 
 .btn__submit:hover {
   background-color: #78a5ae;
+}
+
+.btn {
+  min-height: 80px;
+  background: #78a5ae;
+}
+
+
+
+/* select2 */
+
+.select2-container--default .select2-results>.select2-results__options {
+  max-height: 100px;
 }
