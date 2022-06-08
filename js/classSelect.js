@@ -15,7 +15,7 @@ class YurgenSelect {
     this.selectElems.optionsObj = {};
     this.flags = {
       clearing: false,
-      noChoise: true
+      noChoise: true,
     }
 
     this.creating();
@@ -61,6 +61,10 @@ class YurgenSelect {
 
       this.selectElems.optionsObj[item.value] = item;
 
+      if(this.options.multiply){
+        return false
+      }
+
       let selectListItem = document.createElement('li');
       selectListItem.innerHTML = `
       <button type="button" data-value="${item.value}" class="select__option">
@@ -70,28 +74,21 @@ class YurgenSelect {
       this.selectElems.selectList.append(selectListItem);
 
       let selectOption = selectListItem.querySelector('.select__option');
-
-      // if(this.options.multiply){
-      //   return false
-      // }
-
       if(item.selected) {
-
         this.selectElems.selectField.innerHTML = `<span class="select-field__text">${item.label}</span>`;
         this.selectElems.selectField.dataset.value = item.value;
 
-        if(item.value == 0){
-          selectOption.classList.add('select__option--placeholder');
-          if(this.options.search){
-            this.selectElems.selectInput.placeholder = item.label;
-          }
-        } else {
+        if(item.value != 0){
           selectOption.classList.add('active');
         }
       }
 
       if(item.value == 0) {
         selectOption.closest('li').classList.add('hidden');
+
+        if(this.options.search){
+          this.selectElems.selectInput.placeholder = item.label;
+        }
       }
 
       if(item.disabled) {
@@ -99,6 +96,9 @@ class YurgenSelect {
         selectOption.disabled = true;
       }
     });
+    if(this.options.multiply){
+      this.multiplyList('filling');
+    }
     this.select.before(this.selectElems.selectWrapper)
     this.selectElems.selectValues = [...this.selectElems.selectList.querySelectorAll('.select__option')];
   }
@@ -251,7 +251,7 @@ class YurgenSelect {
     }
 
     this.selectElems.selectField.dataset.value = item.dataset.value;
-    this.selectClose()
+    this.selectClose();
     this.options.change(this);
   }
 
@@ -269,10 +269,12 @@ class YurgenSelect {
       case 'add':
         item.classList.add('active');
         optionEl.selected = true;
+        this.multiplyList('render');
         break;
       case 'remove':
         item.classList.remove('active');
         optionEl.selected = false;
+        this.multiplyList('render');
         break;
     }
 
@@ -282,13 +284,82 @@ class YurgenSelect {
     }
   }
 
-  multiplyList(item) {
-    let listItem = document.createElement('li');
-    listItem.classList.add('select-multiply__item');
-    listItem.innerHTML = `
-    <span class="select-multiply__text">${item.label}</span><span class="select-multiply__cancel"></span>
-    `;
-    this.selectElems.renderedList.prepend(listItem);
+  multiplyList(action) {
+    switch (action) {
+      case 'filling':
+        [...this.select.options].forEach(item =>{
+          let selectListItem = document.createElement('li');
+          selectListItem.innerHTML = `
+          <button type="button" data-value="${item.value}" class="select__option">
+            <span>${item.label}</span>
+          </button>`;
+
+          this.selectElems.selectList.append(selectListItem);
+          let selectOption = selectListItem.querySelector('.select__option');
+
+          if(item.selected && item.value != 0){
+            selectOption.classList.add('active');
+          }
+
+          if(item.value == 0) {
+            this.selectElems.selectField.innerHTML = `<span class="select-field__text">${item.label}</span>`;
+            this.selectElems.selectField.dataset.value = item.value;
+            selectOption.closest('li').classList.add('hidden');
+            if(this.options.search){
+              this.selectElems.selectInput.placeholder = item.label;
+            }
+          }
+
+          if(item.disabled) {
+            selectOption.classList.add('disabled');
+            selectOption.disabled = true;
+          }
+        });
+        this.multiplyList('render');
+        break;
+      case 'render':
+        if(this.selectElems.renderedList) {
+          this.selectElems.renderedList.remove()
+        }
+        let list = document.createElement('ul');
+        list.classList.add('select-multiply__list');
+        this.selectElems.renderedList = list;
+        [...this.select.selectedOptions].forEach(item => {
+          let conditionOne = this.select.selectedOptions.length == 1;
+          let conditionTwo = this.select.selectedOptions[0].value == 0;
+          if( !(conditionOne && conditionTwo) ){
+            if(item.selected && item.value != 0){
+              let listItem = document.createElement('li');
+              listItem.classList.add('select-multiply__item');
+              listItem.dataset.value = item.value;
+              listItem.innerHTML = `
+              <span class="select-multiply__text">${item.label}</span><span class="select-multiply__cancel"></span>
+              `;
+              list.append(listItem);
+              listItem.addEventListener('click', () => {
+                this.removingMultiply(listItem);
+              })
+            } else {
+              item.selected = false;
+            }
+          }
+        })
+        this.select.after(list);
+        break;
+    }
+  }
+
+  removingMultiply(item) {
+    console.log(item)
+    let optionEl = this.selectElems.optionsObj[item.dataset.value];
+    optionEl.selected = false;
+    let selectElem = this.selectElems.selectList.querySelector(`[data-value="${optionEl.value}"]`);
+    selectElem.classList.remove('active');
+    item.remove();
+    if(this.selectElems.renderedList.children.length == 0){
+      this.select.value = 0;
+      this.selectElems.renderedList.remove();
+    }
   }
 
   removeClass(arr, classname) {
@@ -399,10 +470,6 @@ class YurgenSelect {
     items.forEach(item => {
       item.closest('li').classList.remove('hidden');
     });
-  }
-
-  checkSearchValue() {
-
   }
 
   changeHighlight() {

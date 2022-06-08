@@ -12,37 +12,12 @@
   <title>YurgenSelect</title>
 </head>
 <body>
-  
-  <!-- <div class="select-my__container">
-    <div class="select__container">
-      <div class="select__search">
-        <input placeholder="Select Town" type="search" class="select__input">
-      </div>
-      <ul class="select__values" hidden>
-        <li>
-          <button type="button" data-value="0" class="select__option select__option--placeholder">Hello</button>
-        </li>
-        <li>
-          <button type="button" data-value="kv" class="select__option">Kyiv</button>
-        </li>
-        <li>
-          <button type="button" data-value="lv" class="select__option">Lviv</button>
-        </li>
-        <li>
-          <button type="button" data-value="lk" class="select__option">Lutsk</button>
-        </li>
-        <li>
-          <button type="button" data-value="kh" class="select__option">Kharkiv</button>
-        </li>
-      </ul>
-    </div>
-  </div> -->
   <div class="wrapper">
     <form action="#" method="get">
       <h2>Simple Select</h2>
       <div class="select-my__container">
         <select name="simple" class="select" hidden>
-          <option value ="0" selected>Hello</option>
+          <option value ="0" selected>Simple choise</option>
           <option value="kv">Kyiv</option>
           <option value="lv">Lviv</option>
           <option value="pt">Poltava</option>
@@ -69,13 +44,13 @@
       </div>
       <h2>Multiply Select</h2>
       <div class="select-my__container">
-        <select name="with-search[]" multiple="multiple" class="select-3" hidden>
+        <select name="multiply[]" multiple="multiple" class="select-3" hidden>
           <option value ="0" selected>Select your towns</option>
           <option value="kv" selected>Kyiv</option>
           <option value="lv" selected>Lviv</option>
           <option value="ko" selected>Khoma</option>
-          <option value="al">Alubka</option>
-          <option value="qw" selected>Qwerty</option>
+          <option value="al" selected>Alubka</option>
+          <option value="qw">Qwerty</option>
           <option value="ke">Kerch</option>
           <option value="ka">Kalush</option>
           <option value="qe">Qeuro</option>
@@ -83,24 +58,9 @@
           <option value="lk">Lutsk</option>
           <option value="kh" disabled>Kharkiv</option>
         </select>
-        <!-- <ul class="select-multiply__list">
-          <li class="select-multiply__item"><span class="select-multiply__text">Alabama</span><span class="select-multiply__cancel"></span></li>
-          <li class="select-multiply__item"><span class="select-multiply__text">Wyoming</span><span class="select-multiply__cancel"></span></li>
-          <li class="select-multiply__item"><span class="select-multiply__text">China</span><span class="select-multiply__cancel"></span></li>
-          <li class="select-multiply__item"><span class="select-multiply__text">Qwerty</span><span class="select-multiply__cancel"></span></li>
-        </ul> -->
       </div>
       <button type="submit" class="btn__submit">send</button>
-      <div class="btn"></div>
     </form>
-    <select class="js-example-basic-single" multiple="multiple" style="width: 50%;" name="state">
-      <option value="AL">Alabama</option>
-      <option value="WY">Wyoming</option>
-      <option value="CH">China</option>
-      <option value="KY">Kyiv</option>
-      <option value="KH">Kharkiv hjbj jh vjd vj xcjvh jxc vjx vjxch vcjx</option>
-      <option value="Km">Khmel</option>
-    </select>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

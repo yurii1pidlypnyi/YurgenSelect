@@ -1,7 +1,7 @@
 
 window.addEventListener("load", () => {
   let select = new YurgenSelect(".select", {
-    allowClear: true,
+    // allowClear: true,
     // placeholder: 'visible',
     // search: true,
     // change: (item) => {
@@ -21,7 +21,7 @@ window.addEventListener("load", () => {
 
   let select2 = new YurgenSelect(".select-3", {
     multiply: true,
-    // search: true,
+    search: true,
     // change: (item) => {
     //   console.log('changed')
     // },
